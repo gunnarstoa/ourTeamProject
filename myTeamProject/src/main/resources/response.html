@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<title>Quote Generator</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 10;
+}
+
+.header {
+  background-color: #f1f1f1;
+  padding: 20px;
+  text-align: center;
+}
+
+.column {
+  float: left;
+  width: 200px;
+  padding: 15px;
+}
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+@media screen and (max-width:600px) {
+  .column {
+    width: 100%;
+  }
+}
+</style>
+
+</head>
+
+    <body>
+		<div class="header">
+		  <h1>Quote Generator</h1>
+		  <p>Words of wisdom from your favorite characters on Breaking Bad.</p>
+		</div>
+
+		<div class="row">
+		  <div class="column">
+		    <img src=#[vars.img] style="height:200px;" />
+		    <p>#[vars.quote]</p>
+            <p>   -- #[vars.author]</p>
+		  </div> 
+		</div>
+
+    </body>
+</html>

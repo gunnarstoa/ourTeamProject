@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="c82a25b8-0214-4fd3-a93e-5afd198aceea" >
+		<http:request-connection host="www.breakingbadapi.com" protocol="HTTPS"/>
+	</http:request-config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="3fd8724f-3053-45ba-93a0-8e93a8d4b92d" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="myTeamProjectFlow" doc:id="ba2acc96-06f2-4e92-b55c-495cb4df890d" >
+		<http:listener doc:name="Listener" doc:id="89eaf0cb-aa47-4898-bf17-22ef55a73b00" config-ref="HTTP_Listener_config" path="/quote"/>
+		<set-variable value="#[attributes.queryParams.author]" doc:name="Set Variable" doc:id="ea44ab9f-31b0-4eab-914f-7b3594cb1615" variableName="author"/>
+		<scatter-gather doc:name="Scatter-Gather" doc:id="de45684c-3804-4988-a5cc-dd3c9d2457e4" >
+			<route >
+				<http:request method="GET" doc:name="Quote" doc:id="77fc707e-ab7d-4f7b-8d5b-65af5637db5c" config-ref="HTTP_Request_configuration" path="/api/quote/random">
+			<http:query-params><![CDATA[#[output application/java
+---
+{
+	"author" : vars.author
+}]]]></http:query-params>
+		</http:request>
+				<ee:transform doc:name="Transform Message" doc:id="3eca1c45-d77b-4212-9a7e-8ea7dcfa745b" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json	
+---
+{(payload)}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<set-variable value="#[payload['author']]" doc:name="Set Variable" doc:id="d7ad280d-ae64-4668-a367-6ee0cfefeedb" variableName="author"/>
+				<set-variable value="#[payload['quote']]" doc:name="Set Variable" doc:id="7155b891-45cb-4b8b-876b-31d8ac7e5f58" variableName="quote"/>
+			</route>
+			<route >
+				<http:request method="GET" doc:name="Detail" doc:id="80452c44-3e9c-4cd4-a024-51ff16616f45" config-ref="HTTP_Request_configuration" path="/api/characters">
+					<http:query-params><![CDATA[#[output application/java
+---
+{
+	"name" : vars.author
+}]]]></http:query-params>
+				</http:request>
+				<ee:transform doc:name="Transform Message" doc:id="2fd06729-55eb-4958-b7af-d7f5b3e2f932" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json	
+---
+{ (payload) }]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<set-variable value="#[payload['img']]" doc:name="Set Variable" doc:id="f5b40b96-558d-4f00-ad2a-19a0261e5a07" variableName="img"/>
+			</route>
+		</scatter-gather>
+		<parse-template doc:name="Parse Template" doc:id="8b9b3f0c-19bd-406d-9488-9ffc6c932f02" location="response.html" outputMimeType="text/html"/>
+	</flow>
+</mule>
