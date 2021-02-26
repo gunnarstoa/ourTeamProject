@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="ourteamproject-suite.xml" />
+	<munit:test name="myTeamProjectFlow-test" doc:id="46a36dad-e3ee-4aae-a2f9-c35e5cb7227b" >
+		<munit:behavior >
+			<munit-tools:spy doc:name="Spy Parse Template" doc:id="206395bd-15ae-4ea2-a393-51f10bf7f60e" processor="parse-template">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="8b9b3f0c-19bd-406d-9488-9ffc6c932f02" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert variables" doc:id="a2e70896-acb3-41de-9986-33274224a051" message="The variables do not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import myTeamProjectFlowtest::spy_assert_variables
+---
+spy_assert_variables::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit-tools:spy doc:name="Spy Set Variable" doc:id="a1453f7d-5c59-4c1a-bdfc-926c39e87d4e" processor="set-variable">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ea44ab9f-31b0-4eab-914f-7b3594cb1615" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert variables" doc:id="f7119b24-c163-44cd-bafd-0a42eb79debb" message="The variables do not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import myTeamProjectFlowtest::spy_assert_variables1
+---
+spy_assert_variables1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="83d07467-0720-4639-a10e-1acc24da26e5" >
+				<munit:attributes value="#[readUrl('classpath://myTeamProjectFlowtest/set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to myTeamProjectFlow" doc:id="65d5ebb3-ffff-4abc-a19b-248a376150e2" name="myTeamProjectFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert variables" doc:id="5502a4e2-e770-4dfc-8f50-4bb7faed8153" message="The variables do not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import myTeamProjectFlowtest::assert_expression_variables
+---
+assert_expression_variables::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Parse Template" doc:id="a87e5cff-50d5-4111-a74f-a919aa446ebc" processor="parse-template" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="8b9b3f0c-19bd-406d-9488-9ffc6c932f02" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Set Variable" doc:id="a0f22d67-5bac-416d-8598-cc6284630aba" processor="set-variable" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ea44ab9f-31b0-4eab-914f-7b3594cb1615" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+
+</mule>
